@@ -95,6 +95,7 @@ function render(d){
  list("cnt",d.content,x=>`<li>${esc(x.title)}<span class="tag">${esc(x.platform)}</span><span class="tag ok">${esc(x.status)}</span></li>`);
  list("leads",d.leads,x=>`<li>${esc(x.name)}<span class="tag">${esc(x.status)}</span><br><small>${esc(x.next)}</small></li>`);
  list("mon",d.monitors,x=>`<li><small>${esc(x.last)}</small>${esc(x.name)}<span class="tag ${x.status=="ok"?"ok":"bad"}">${esc(x.status)}</span><br><small>${esc(x.note)}</small></li>`);
+ if(d.acks&&d.acks.length)$("sent").innerHTML=d.acks.slice().reverse().map(a=>`<div>${esc(a.ts)} · ${esc(a.text||a.type)} → <b>${esc(a.ans)}</b></div>`).join("");
  ls.set("hqcache",JSON.stringify(d));
 }
 async function load(){
