@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#05060d"><title>Штаб</title>
+<style>
+:root{--bg:#05060d;--tx:#eef2ff;--dim:#8d97b8;--acc:#7c5cff;--acc2:#ff3d9a;--ok:#27d6a0;--warn:#ffb020;--bad:#ff4d5e;--glass:rgba(255,255,255,.055);--line:rgba(255,255,255,.1)}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html{scroll-snap-type:y proximity;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font:16px/1.5 -apple-system,BlinkMacSystemFont,"SF Pro Display",Inter,system-ui,sans-serif;overflow-x:hidden;padding-bottom:96px}
+#gl{position:fixed;inset:0;z-index:0;width:100%;height:100%}
+.veil{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(900px 600px at 80% -10%,rgba(124,92,255,.25),transparent 60%),radial-gradient(800px 600px at -10% 110%,rgba(255,61,154,.18),transparent 60%)}
+main{position:relative;z-index:2;max-width:760px;margin:0 auto;padding:0 16px}
+section{min-height:100svh;padding:72px 0 24px;scroll-snap-align:start;display:flex;flex-direction:column;justify-content:center;gap:14px}
+section.hero{justify-content:flex-end;padding-bottom:40px}
+h2{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);font-weight:600;display:flex;align-items:center;gap:10px}
+h2:after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+.card{background:var(--glass);border:1px solid var(--line);border-radius:22px;padding:18px;backdrop-filter:blur(22px) saturate(160%);-webkit-backdrop-filter:blur(22px) saturate(160%);box-shadow:0 20px 60px -30px rgba(124,92,255,.5)}
+.rv{opacity:0;transform:translateY(34px) scale(.98);transition:opacity .8s cubic-bezier(.2,.8,.2,1),transform .8s cubic-bezier(.2,.8,.2,1)}
+.rv.in{opacity:1;transform:none}
+.big{font-size:clamp(28px,8vw,50px);line-height:1.08;font-weight:750;letter-spacing:-.02em;background:linear-gradient(120deg,#fff,#b9a8ff 55%,#ff8fc6);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--dim);margin-top:6px}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:99px;background:var(--glass);border:1px solid var(--line);font-size:13px}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 var(--ok);animation:p 2s infinite}
+.dot.warn{background:var(--warn);--c:var(--warn)}.dot.bad{background:var(--bad)}
+@keyframes p{0%{box-shadow:0 0 0 0 rgba(39,214,160,.6)}100%{box-shadow:0 0 0 14px rgba(39,214,160,0)}}
+.bar{height:8px;border-radius:9px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:14px}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--acc),var(--acc2));border-radius:9px;transition:width 1.2s cubic-bezier(.2,.8,.2,1);box-shadow:0 0 18px var(--acc)}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stat b{display:block;font-size:30px;font-weight:750;letter-spacing:-.02em}
+.stat span{color:var(--dim);font-size:13px}
+ul.tl{list-style:none;padding:0;position:relative}
+ul.tl li{padding:10px 0 10px 24px;border-bottom:1px solid var(--line);position:relative;font-size:15px}
+ul.tl li:before{content:"";position:absolute;left:4px;top:18px;width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 12px var(--acc)}
+ul.tl li.d:before{background:var(--ok);box-shadow:0 0 12px var(--ok)}
+ul.tl small{color:var(--dim);margin-right:8px;font-variant-numeric:tabular-nums}
+.tag{font-size:12px;padding:3px 9px;border-radius:99px;background:rgba(124,92,255,.2);color:#cdbfff;margin-left:6px}
+.tag.ok{background:rgba(39,214,160,.18);color:#8bf0cf}.tag.bad{background:rgba(255,77,94,.2);color:#ffb0b8}
+pre{white-space:pre-wrap;font:12px/1.5 ui-monospace,Menlo,monospace;color:#b7c0e0;max-height:180px;overflow:auto}
+#fab{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:20;border:0;color:#fff;font:600 16px inherit;padding:16px 22px;border-radius:99px;background:linear-gradient(120deg,var(--acc),var(--acc2));box-shadow:0 14px 40px -8px var(--acc);cursor:pointer;transition:transform .2s}
+#fab:active{transform:scale(.94)}
+#sheet{position:fixed;left:0;right:0;bottom:0;z-index:30;transform:translateY(105%);transition:transform .5s cubic-bezier(.2,.8,.2,1);padding:18px 16px calc(18px + env(safe-area-inset-bottom));background:rgba(12,13,26,.92);backdrop-filter:blur(30px);border-top:1px solid var(--line);border-radius:26px 26px 0 0;max-width:760px;margin:0 auto}
+#sheet.open{transform:none}
+.btn{border:1px solid var(--line);background:var(--glass);color:var(--tx);padding:12px 16px;border-radius:14px;font:600 15px inherit;cursor:pointer}
+.btn:active{transform:scale(.96)}.btn.p{background:linear-gradient(120deg,var(--acc),var(--acc2));border:0}
+textarea,input{width:100%;margin-top:12px;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:14px;padding:13px;color:var(--tx);font:16px inherit;outline:none}
+#lock{position:fixed;inset:0;z-index:50;background:var(--bg);display:none;align-items:center;justify-content:center;padding:24px}
+#lock .card{width:100%;max-width:380px;text-align:center}
+#toast{position:fixed;left:50%;top:18px;transform:translate(-50%,-90px);z-index:60;padding:12px 18px;border-radius:99px;background:#16182e;border:1px solid var(--line);transition:transform .4s;font-size:14px}
+#toast.show{transform:translate(-50%,0)}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}}
+</style></head><body>
+<canvas id="gl"></canvas><div class="veil"></div>
+<div id="lock"><div class="card"><div class="big" style="font-size:34px">Штаб</div><p class="sub">Личный центр управления</p>
+<input id="key" type="password" placeholder="Ключ доступа" autocomplete="off"><button class="btn p" id="ksave" style="width:100%;margin-top:12px">Войти</button></div></div>
+<div id="toast"></div>
+<main>
+<section class="hero"><div class="pill" style="align-self:flex-start"><i class="dot" id="hd"></i><span id="hs">подключаюсь…</span></div>
+<div class="rv in"><div class="sub">Сейчас делаю</div><div class="big" id="now">…</div><p class="sub" id="nowd"></p>
+<div class="bar"><i id="pg"></i></div></div></section>
+<section><h2>Живой статус</h2><div class="grid">
+<div class="card stat rv"><b id="s1">-</b><span>сторож</span></div><div class="card stat rv"><b id="s2">-</b><span>прогрев</span></div>
+<div class="card stat rv"><b id="s3">-</b><span>данные обновлены</span></div><div class="card stat rv"><b id="s4">-</b><span>вызовов модели</span></div></div>
+<div class="card rv"><div class="sub">Прогрев, последние строки</div><pre id="wl">-</pre></div></section>
+<section><h2>Лента</h2><div class="card rv"><ul class="tl" id="done"></ul></div></section>
+<section><h2>План</h2><div class="card rv"><ul class="tl" id="plan"></ul></div><h2>Блокеры</h2><div class="card rv"><ul class="tl" id="blk"></ul></div></section>
+<section><h2>Контент</h2><div class="card rv"><ul class="tl" id="cnt"></ul></div></section>
+<section><h2>Лиды</h2><div class="card rv"><ul class="tl" id="leads"></ul></div><h2>Мониторы</h2><div class="card rv"><ul class="tl" id="mon"></ul></div></section>
+</main>
+<button id="fab">Команда</button>
+<div id="sheet"><div class="row"><button class="btn" data-t="pause_warmup">Пауза прогрева</button><button class="btn" data-t="resume_warmup">Продолжить прогрев</button><button class="btn" data-t="approve">Ок на серию</button></div>
+<textarea id="txt" rows="3" placeholder="Задача для Claude"></textarea><div class="row" style="margin-top:12px"><button class="btn p" id="send" style="flex:1">Отправить</button><button class="btn" id="close">Закрыть</button></div><div class="sub" id="sent" style="font-size:13px"></div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const $=id=>document.getElementById(id),R="Lawago23/hq-private";
+const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+let tok=ls.get("hqtok"),state=0; // state 0 ok 1 warn 2 bad
+const esc=s=>String(s==null?"":s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+function toast(m){const t=$("toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2200)}
+function lock(){$("lock").style.display=tok?"none":"flex"}
+$("ksave").onclick=()=>{const v=$("key").value.trim();if(v){tok=v;ls.set("hqtok",v);lock();load()}};
+const H=()=>({Authorization:"Bearer "+tok,"X-GitHub-Api-Version":"2022-11-28"});
+function list(id,arr,fn){$(id).innerHTML=(arr&&arr.length?arr:["пусто"]).map(fn).join("")}
+function render(d){
+ const n=d.now||{};$("now").textContent=n.title||"Нет задачи";$("nowd").textContent=n.detail||(n.started?"с "+n.started:"");$("pg").style.width=(n.progress||0)+"%";
+ const l=d.live||{},age=l.ts?(Date.now()-new Date(l.ts))/1000:1e9;
+ $("s1").textContent=l.watcher?"работает":"стоит";$("s2").textContent=l.warmup?"работает":"стоит";
+ $("s3").textContent=age<90?Math.round(age)+" с назад":age<3600?Math.round(age/60)+" мин назад":"давно";
+ $("s4").textContent=(d.usage&&d.usage.calls)||"-";$("wl").textContent=(l.warmup_log||[]).join("\n")||"тихо";
+ state=age>300?2:(l.watcher&&l.warmup?0:1);
+ $("hd").className="dot"+(state==2?" bad":state==1?" warn":"");$("hs").textContent=state==2?"нет свежих данных":state==1?"часть сервисов стоит":"всё живое";
+ list("done",(d.done||[]).slice(0,25),x=>`<li class="d"><small>${esc(x.time)}</small>${esc(x.text)}</li>`);
+ list("plan",d.plan24,x=>`<li class="${x.done?"d":""}"><small>${esc(x.time)}</small>${esc(x.text)}</li>`);
+ list("blk",d.blockers,x=>`<li>${esc(x)}</li>`);
+ list("cnt",d.content,x=>`<li>${esc(x.title)}<span class="tag">${esc(x.platform)}</span><span class="tag ok">${esc(x.status)}</span></li>`);
+ list("leads",d.leads,x=>`<li>${esc(x.name)}<span class="tag">${esc(x.status)}</span><br><small>${esc(x.next)}</small></li>`);
+ list("mon",d.monitors,x=>`<li><small>${esc(x.last)}</small>${esc(x.name)}<span class="tag ${x.status=="ok"?"ok":"bad"}">${esc(x.status)}</span><br><small>${esc(x.note)}</small></li>`);
+ ls.set("hqcache",JSON.stringify(d));
+}
+async function load(){
+ if(!tok)return;
+ try{const r=await fetch(`https://api.github.com/repos/${R}/contents/data.json?t=${Date.now()}`,{headers:{...H(),Accept:"application/vnd.github.raw"},cache:"no-store"});
+  if(r.status==401||r.status==404){tok=null;ls.set("hqtok","");lock();toast("Ключ не подошёл");return}
+  render(await r.json())}catch(e){const c=ls.get("hqcache");if(c)render(JSON.parse(c));$("hs").textContent="нет связи";$("hd").className="dot bad"}
+}
+async function cmd(type,text){
+ for(let i=0;i<3;i++){
+  const r=await fetch(`https://api.github.com/repos/${R}/contents/commands.json`,{headers:H(),cache:"no-store"});const j=await r.json();
+  const arr=JSON.parse(decodeURIComponent(escape(atob(j.content.replace(/\n/g,"")))));
+  arr.push({id:Date.now().toString(36),ts:new Date().toISOString(),type,text:text||""});
+  const body={message:"cmd",sha:j.sha,content:btoa(unescape(encodeURIComponent(JSON.stringify(arr,null,1))))};
+  const p=await fetch(`https://api.github.com/repos/${R}/contents/commands.json`,{method:"PUT",headers:H(),body:JSON.stringify(body)});
+  if(p.ok){$("sent").textContent="Отправлено: "+(text||type);toast("Отправлено");return}
+  if(p.status!=409&&p.status!=422)break}
+ toast("Не отправилось")
+}
+document.querySelectorAll("[data-t]").forEach(b=>b.onclick=()=>cmd(b.dataset.t));
+$("send").onclick=()=>{const t=$("txt").value.trim();if(t){cmd("task",t);$("txt").value=""}};
+$("fab").onclick=()=>$("sheet").classList.add("open");$("close").onclick=()=>$("sheet").classList.remove("open");
+const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&e.target.classList.add("in")),{threshold:.15});
+document.querySelectorAll(".rv").forEach(e=>io.observe(e));
+lock();load();setInterval(load,20000);
+// 3D core
+try{const cv=$("gl"),r=new THREE.WebGLRenderer({canvas:cv,alpha:true,antialias:true});r.setPixelRatio(Math.min(devicePixelRatio,2));
+const s=new THREE.Scene(),c=new THREE.PerspectiveCamera(50,1,.1,100);c.position.z=6;
+const core=new THREE.Mesh(new THREE.IcosahedronGeometry(1.25,2),new THREE.MeshBasicMaterial({color:0x7c5cff,wireframe:true,transparent:true,opacity:.7}));s.add(core);
+const inner=new THREE.Mesh(new THREE.SphereGeometry(.7,32,32),new THREE.MeshBasicMaterial({color:0xff3d9a,transparent:true,opacity:.55}));s.add(inner);
+const rings=[0,1,2].map(i=>{const m=new THREE.Mesh(new THREE.TorusGeometry(2+i*.45,.012,8,160),new THREE.MeshBasicMaterial({color:i?0xff3d9a:0x27d6a0,transparent:true,opacity:.6}));m.rotation.x=1+i*.6;m.rotation.y=i*.8;s.add(m);return m});
+const pg=new THREE.BufferGeometry(),pa=new Float32Array(900);for(let i=0;i<900;i++)pa[i]=(Math.random()-.5)*16;pg.setAttribute("position",new THREE.BufferAttribute(pa,3));
+const pts=new THREE.Points(pg,new THREE.PointsMaterial({size:.025,color:0xb9a8ff}));s.add(pts);
+function rs(){r.setSize(innerWidth,innerHeight,false);c.aspect=innerWidth/innerHeight;c.updateProjectionMatrix();const g=new THREE.Group();}rs();addEventListener("resize",rs);
+let sy=0;addEventListener("scroll",()=>sy=scrollY/innerHeight,{passive:true});
+const cols=[0x7c5cff,0xffb020,0xff4d5e];let t=0;
+(function a(){t+=.01;core.rotation.y=t*.6+sy*.8;core.rotation.x=t*.3;inner.scale.setScalar(1+Math.sin(t*3)*.06);
+core.material.color.setHex(cols[state]);rings.forEach((m,i)=>{m.rotation.z=t*(.4+i*.2)});pts.rotation.y=t*.05+sy*.2;
+const k=Math.max(0,1-sy*.6);core.position.set(0,.9-sy*.6,0);inner.position.copy(core.position);rings.forEach(m=>m.position.copy(core.position));
+r.render(s,c);requestAnimationFrame(a)})()}catch(e){}
+</script></body></html>
